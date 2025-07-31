@@ -1,0 +1,33 @@
+# RAG 처리 전용 패키지 (LLM 섹션/키워드 추출, 임베딩)
+# LLM 기반 섹션 제목, 키워드, 요약 추출 및 임베딩 생성
+
+# LLM 처리 (섹션 제목, 키워드, 요약 추출)
+ollama==0.5.1
+requests==2.32.4
+
+# 임베딩 생성
+sentence-transformers
+faiss-cpu
+
+# 데이터 처리
+pandas==2.3.1
+numpy>=1.25.0,<3.0
+
+# 머신러닝
+scikit-learn
+pickle-mixin
+
+# 유틸리티
+certifi==2025.7.14
+charset-normalizer==3.4.2
+idna==3.10
+urllib3==2.5.0
+typing_extensions==4.14.1
+
+# 주요 기능:
+# - LLM 섹션 제목 추출
+# - LLM 키워드 추출
+# - LLM 요약 생성
+# - 임베딩 벡터 생성
+# - 벡터 검색 인덱스 구축
+# - RAG 시스템 통합 

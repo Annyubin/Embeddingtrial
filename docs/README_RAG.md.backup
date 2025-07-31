@@ -1,0 +1,237 @@
+# 🧠 RAG 임베딩 시스템
+
+JSON 파일을 기반으로 RAG(Retrieval-Augmented Generation)에서 사용할 수 있는 임베딩 데이터셋을 자동으로 생성하고 검색 테스트까지 가능한 시스템입니다.
+
+## 📋 목표
+
+- JSON 구조의 문서 데이터를 자동으로 처리
+- 페이지 기준으로 text와 table을 순서대로 병합
+- SentenceTransformer를 사용한 벡터화
+- FAISS 인덱스를 통한 고속 검색
+- 검색 성능 테스트 및 대화형 검색 기능
+- 임베딩 결과 다운로드 및 관리
+
+## 🏗️ 시스템 구조 (2025.07.22 업데이트)
+
+```
+📁 RAG 시스템
+├── 📄 src/rag_embedding_system.py    # 메인 RAG 시스템
+├── 📄 src/test_rag_system.py         # 테스트 스크립트
+├── 📄 src/download_embeddings.py     # 다운로드 스크립트
+├── 📄 requirements/requirements_rag.txt  # 필요한 패키지
+├── 📄 scripts/setup_rag_environment.bat  # 환경 설정
+├── 📄 scripts/download_embeddings.bat    # 다운로드 배치
+└── 📁 생성되는 파일들
+    ├── 📄 data/250721_최종_파일_일부.json    # 샘플 JSON 파일
+    ├── 📄 indexes/faiss_index.faiss         # FAISS 인덱스
+    ├── 📄 indexes/faiss_index_metadata.pkl  # 메타데이터
+    └── 📄 downloads/embedding_results_*.zip # 다운로드 패키지
+```
+
+## 🚀 설치 및 실행
+
+### 1. 환경 설정 (권장)
+```bash
+# 자동 설정
+scripts\setup_rag_environment.bat
+
+# 또는 수동 설정
+python -m venv environments\venv_rag_new
+environments\venv_rag_new\Scripts\activate
+pip install -r requirements\requirements_rag.txt
+```
+
+### 2. 메인 시스템 실행
+```bash
+# 가상환경 활성화
+environments\venv_rag_new\Scripts\activate
+
+# RAG 시스템 실행
+python src\rag_embedding_system.py
+```
+
+### 3. 테스트 시스템 실행
+```bash
+python src\test_rag_system.py
+```
+
+### 4. 임베딩 결과 다운로드
+```bash
+python src\download_embeddings.py
+```
+
+## 📊 처리 단계
+
+### 1단계: JSON 데이터 처리
+- 입력 JSON 구조: 각 항목은 "content"와 "metadata"를 가짐
+- "content_type"은 "text" 또는 "table"
+- 페이지별로 같은 page의 text + table을 순서대로 병합
+
+### 2단계: 텍스트 정리
+- 불필요한 개행, 공백, 중복 제거
+- 청크 형식: "📄 텍스트:\n...\n\n📊 표 내용:\n..."
+
+### 3단계: 메타데이터 추가
+- page: 페이지 번호
+- document_order: 문서 내 순서
+- source_file: 원본 파일명
+- content_type: "mixed" (text + table)
+- processed_at: 처리 시간
+
+### 4단계: 벡터화
+- SentenceTransformer 모델: "paraphrase-multilingual-MiniLM-L12-v2"
+- 다국어 지원 (한국어 포함)
+- 384차원 벡터 생성
+
+### 5단계: FAISS 인덱스 생성
+- Flat 인덱스 (기본 설정)
+- IVF 인덱스 지원 (대용량 데이터용)
+- 고속 검색을 위한 벡터 인덱싱
+
+### 6단계: 다운로드 패키지 생성 (신규)
+- ZIP 파일로 임베딩 결과 전체 다운로드
+- 메타데이터 및 통계 정보 포함
+- 웹 인터페이스에서 직접 다운로드 가능
+
+## 📝 JSON 입력 형식
+
+```json
+[
+  {
+    "content": "텍스트 내용",
+    "metadata": {
+      "content_type": "text",
+      "page": 1,
+      "source_file": "파일명.pdf"
+    }
+  },
+  {
+    "content": "표 내용\n행1 열1\n행2 열2",
+    "metadata": {
+      "content_type": "table",
+      "page": 1,
+      "source_file": "파일명.pdf"
+    }
+  }
+]
+```
+
+## 🔍 검색 기능
+
+### 기본 검색
+```python
+from src.rag_embedding_system import RAGEmbeddingSystem
+
+rag_system = RAGEmbeddingSystem()
+rag_system.load_index("indexes/faiss_index")
+results = rag_system.search("검색어", top_k=5)
+```
+
+### 검색 결과 형식
+```python
+[
+  {
+    "rank": 1,
+    "score": 0.8542,
+    "chunk": {
+      "id": "chunk_001",
+      "text": "병합된 텍스트 내용",
+      "metadata": {
+        "page": 1,
+        "document_order": 1,
+        "source_file": "파일명.json",
+        "content_type": "mixed",
+        "processed_at": "2024-01-01T12:00:00"
+      }
+    }
+  }
+]
+```
+
+## 🧪 테스트 기능
+
+### 1. 성능 테스트
+- 4가지 미리 정의된 쿼리로 검색 성능 측정
+- 평균 검색 시간, 결과 수, 유사도 점수 확인
+- 의료기기 관련 질문들로 테스트
+
+### 2. 대화형 검색
+- 실시간으로 검색어 입력 가능
+- 검색 결과를 보기 좋게 출력
+- 'quit' 또는 'exit'로 종료
+
+### 3. 자동 테스트 (신규)
+- 시스템 실행 시 자동으로 테스트 실행
+- 검색 성능 및 정확도 확인
+
+## 📦 다운로드 시스템 (신규)
+
+### 1. ZIP 패키지 생성
+```bash
+python src\download_embeddings.py
+```
+
+### 2. 포함된 파일들
+- **`250721_최종_파일_일부.json`**: 임베딩된 텍스트/표 데이터
+- **`faiss_index.faiss`**: FAISS 벡터 인덱스
+- **`faiss_index_metadata.pkl`**: 인덱스 메타데이터
+- **`metadata.json`**: 상세 정보 및 통계
+
+### 3. 웹 인터페이스 다운로드
+- Streamlit 앱에서 "📦 임베딩 결과 ZIP 패키지 생성" 버튼
+- 생성 후 바로 다운로드 가능
+
+## 📈 성능 특징
+
+- **빠른 검색**: FAISS 인덱스를 통한 밀리초 단위 검색
+- **다국어 지원**: 한국어를 포함한 다국어 텍스트 처리
+- **확장성**: 대용량 문서 처리 가능
+- **정확성**: 의미적 유사도 기반 검색
+- **파일 관리**: 체계적인 폴더 구조 및 다운로드 시스템
+
+## 🔧 고급 설정
+
+### 다른 모델 사용
+```python
+rag_system = RAGEmbeddingSystem(model_name="all-MiniLM-L6-v2")
+```
+
+### 다른 FAISS 인덱스 타입
+```python
+rag_system.create_faiss_index(embeddings, index_type="IVF100,Flat")
+```
+
+### 커스텀 청크 크기
+```python
+# src/rag_embedding_system.py의 merge_page_content 함수 수정
+```
+
+## 🚨 주의사항
+
+1. **메모리 사용량**: 대용량 문서 처리 시 충분한 RAM 필요
+2. **모델 다운로드**: 첫 실행 시 SentenceTransformer 모델 다운로드
+3. **인덱스 저장**: 생성된 인덱스는 `indexes/` 폴더에 저장
+4. **한글 인코딩**: UTF-8 인코딩 사용
+5. **가상환경**: `venv_rag_new` 환경 사용 필수
+
+## 🔄 최근 업데이트 (2025.07.22)
+
+### 1. 프로젝트 구조 정리
+- ✅ **폴더 분류**: src, data, indexes, downloads 등으로 체계적 정리
+- ✅ **파일 정리**: 루트 폴더 깔끔하게 정리
+- ✅ **경로 수정**: 모든 파일 경로 업데이트
+
+### 2. RAG 시스템 개선
+- ✅ **FAISS 인덱스**: `indexes/` 폴더에 저장
+- ✅ **다운로드 시스템**: ZIP 패키지로 임베딩 결과 다운로드
+- ✅ **웹 인터페이스**: Streamlit 앱에서 직접 다운로드
+- ✅ **가상환경**: `venv_rag_new` 전용 환경
+
+### 3. 사용성 개선
+- ✅ **배치 스크립트**: 자동 환경 설정 및 다운로드
+- ✅ **메타데이터**: 상세 정보 및 통계 포함
+- ✅ **에러 처리**: 견고한 예외 처리
+
+## 📞 문의
+
+시스템 사용 중 문제가 발생하면 로그를 확인하거나 코드를 검토해주세요. 

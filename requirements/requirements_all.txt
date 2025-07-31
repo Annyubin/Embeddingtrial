@@ -1,0 +1,111 @@
+# 전체 시스템 통합 패키지 (모든 가상환경 포함)
+# 각 가상환경별로 필요한 패키지들을 통합한 완전한 시스템
+
+# =============================================================================
+# 웹 인터페이스 (venv_web_new)
+# =============================================================================
+# 웹 프레임워크
+streamlit==1.47.0
+
+# 데이터 처리
+pandas==2.3.1
+numpy==2.3.1
+
+# PDF 처리 (미리보기용)
+PyMuPDF==1.26.3
+
+# 시각화
+plotly==6.2.0
+altair==5.5.0
+
+# LLM 연동 (웹 인터페이스용)
+ollama==0.5.1
+requests==2.32.4
+
+# Streamlit 의존성
+click==8.2.1
+packaging==25.0
+protobuf==6.31.1
+pyarrow==21.0.0
+pydantic==2.11.7
+pydeck==0.9.1
+watchdog==6.0.0
+
+# =============================================================================
+# 텍스트 처리 (venv_text_new)
+# =============================================================================
+# PDF 텍스트 추출
+pypdf==3.17.4
+
+# 자연어 처리
+nltk==3.9.1
+regex==2024.11.6
+
+# 유틸리티
+tqdm==4.67.1
+joblib==1.5.1
+
+# =============================================================================
+# 테이블 처리 (venv_table_new)
+# =============================================================================
+# PDF 테이블 추출
+camelot-py==1.0.0
+ghostscript==0.8.1
+opencv-python-headless==4.12.0.88
+pypdfium2==4.30.0
+pdfminer.six==20250506
+
+# 데이터 처리
+openpyxl==3.1.5
+
+# 테이블 처리
+tabulate==0.9.0
+
+# 암호화 및 인코딩
+cffi==1.17.1
+chardet==5.2.0
+cryptography==45.0.5
+pycparser==2.22
+et_xmlfile==2.0.0
+
+# =============================================================================
+# RAG 처리 (venv_rag_new)
+# =============================================================================
+# 임베딩 생성
+sentence-transformers
+faiss-cpu
+
+# 머신러닝
+scikit-learn
+pickle-mixin
+
+# =============================================================================
+# 공통 유틸리티 (모든 가상환경)
+# =============================================================================
+# HTTP 및 인코딩
+certifi==2025.7.14
+charset-normalizer==3.4.2
+idna==3.10
+urllib3==2.5.0
+
+# 기타 유틸리티
+python-dateutil==2.9.0.post0
+pytz==2025.2
+typing_extensions==4.14.1
+six==1.17.0
+colorama==0.4.6
+tzdata==2025.2
+
+# =============================================================================
+# 가상환경별 설치 가이드
+# =============================================================================
+# venv_text_new: PDF 텍스트 추출, 청킹, 필터링
+# venv_table_new: PDF 테이블 추출, LLM 컬럼 추론
+# venv_rag_new: LLM 섹션/키워드 추출, 임베딩 생성
+# venv_web_new: 웹 인터페이스, 파일 업로드/다운로드
+
+# 설치 명령어:
+# source environments/venv_text_new/bin/activate && pip install -r requirements/requirements_text_new.txt
+# source environments/venv_table_new/bin/activate && pip install -r requirements/requirements_table_new.txt
+# source environments/venv_rag_new/bin/activate && pip install -r requirements/requirements_rag_new.txt
+# source environments/venv_web_new/bin/activate && pip install -r requirements/requirements_web_new.txt 

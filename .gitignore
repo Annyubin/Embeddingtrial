@@ -1,0 +1,77 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Project specific
+*.zip
+*.pdf
+*.faiss
+*.pkl
+*.pickle
+embeddings_*.faiss
+embeddings_*.pkl
+embeddings_*.pickle
+
+# Large data files
+data/실험/
+data/pdfs/
+*.json.bak
+*.json.tmp
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+temp/
+tmp/
+*.tmp
+*.temp
+
+# Test files
+test_*.py
+*_test.py
+
+# Results (keep only final results)
+full_pipeline_tables.json
+final_text_only_data.json 
